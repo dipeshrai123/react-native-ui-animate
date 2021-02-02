@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { Animated } from 'react-native';
+import { bin } from './Math';
 
-const isDefined = <T>(value: T): boolean => {
-  return value !== undefined && value !== null;
-};
-
+type AnimatedValueType = number | boolean;
 type InitialConfigType = 'ease' | 'elastic' | undefined;
 
 type AnimationConfigType = {
@@ -12,6 +10,22 @@ type AnimationConfigType = {
   mass?: number;
   stiffness?: number;
   damping?: number;
+};
+
+const isDefined = <T>(value: T): boolean => {
+  return value !== undefined && value !== null;
+};
+
+const getValue = (value: AnimatedValueType) => {
+  if (typeof value === 'number') {
+    return value;
+  } else if (typeof value === 'boolean') {
+    return bin(value);
+  } else {
+    throw new Error(
+      'Invalid Value! Animated value only accepts boolean or number.'
+    );
+  }
 };
 
 const getInitialConfig = (animationType: InitialConfigType) => {
@@ -42,14 +56,17 @@ export interface UseAnimatedValueConfig {
  * Animates the value from one state to another
  */
 export const useAnimatedValue = (
-  initialValue: number,
+  initialValue: number | boolean,
   config?: UseAnimatedValueConfig
 ) => {
-  const _animatedValue = React.useRef(new Animated.Value(initialValue)).current;
-  const previousValue = React.useRef<number>();
+  const _initialValue = getValue(initialValue);
+  const _animatedValue = React.useRef(new Animated.Value(_initialValue))
+    .current;
+  const previousValue = React.useRef<number>(_initialValue);
+  const currentValue = React.useRef(_initialValue);
 
-  // const onAnimationEnd = config?.onAnimationEnd;
-  // const listener = config?.listener;
+  const onAnimationEnd = config?.onAnimationEnd;
+  const listener = config?.listener;
   let duration = config?.duration;
   if (isDefined(config?.immediate) && !!config?.immediate) {
     duration = 0;
@@ -84,16 +101,38 @@ export const useAnimatedValue = (
           toValue: updatedValue,
           duration,
           useNativeDriver: false,
-        }).start();
+        }).start(function ({ finished }) {
+          if (finished) {
+            onAnimationEnd && onAnimationEnd(currentValue.current);
+          }
+        });
       } else {
         Animated.spring(_animatedValue, {
           toValue: updatedValue,
           ...springConfig,
           useNativeDriver: false,
-        }).start();
+        }).start(function ({ finished }) {
+          if (finished) {
+            onAnimationEnd && onAnimationEnd(currentValue.current);
+          }
+        });
       }
     }
   };
+
+  React.useEffect(() => {
+    if (initialValue !== previousValue.current) {
+      _update({ updatedValue: _initialValue });
+      previousValue.current = _initialValue;
+    }
+  }, [initialValue]);
+
+  React.useEffect(() => {
+    _animatedValue.addListener(function ({ value }) {
+      currentValue.current = value;
+      listener && listener(value);
+    });
+  }, []);
 
   const targetObject: { value: any; immediate: boolean } = {
     value: initialValue,

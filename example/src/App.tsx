@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text, Animated, Button } from 'react-native';
+import { StyleSheet, View, Text, Animated, Button, Alert } from 'react-native';
 import {
   useAnimatedValue,
   AnimatedBlock,
@@ -8,7 +8,13 @@ import {
 } from 'react-native-ui-animate';
 
 export default function App() {
-  const x = useAnimatedValue(0);
+  const [open, setOpen] = React.useState(false);
+  const [a, setA] = React.useState(0);
+  const x = useAnimatedValue(open, {
+    onAnimationEnd: function (value) {
+      setA(value);
+    },
+  });
 
   return (
     <View style={styles.container}>
@@ -18,7 +24,7 @@ export default function App() {
         style={{
           width: 100,
           height: 100,
-          backgroundColor: '#3399ff',
+          backgroundColor: interpolate(x.value, [0, 1], ['#3399ff', 'red']),
           transform: [
             {
               translateX: interpolate(x.value, [0, 1], [-100, 100]),
@@ -27,8 +33,10 @@ export default function App() {
         }}
       ></AnimatedBlock>
 
-      <Button title="Click Me" onPress={() => (x.value = 1)} />
-      <Button title="Click Me" onPress={() => (x.value = 0)} />
+      <Text>{a}</Text>
+
+      <Button title="Click Me" onPress={() => setOpen(true)} />
+      <Button title="Click Me" onPress={() => setOpen(false)} />
     </View>
   );
 }
