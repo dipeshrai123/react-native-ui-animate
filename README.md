@@ -1,4 +1,4 @@
-# react-native-ui-animate
+# React Native UI Animate
 
 React Native library for gestures and animation
 
