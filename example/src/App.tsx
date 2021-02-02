@@ -8,7 +8,7 @@ import {
 } from 'react-native-ui-animate';
 
 export default function App() {
-  const x = useAnimatedValue(0, { duration: 1000 });
+  const x = useAnimatedValue(0);
 
   return (
     <View style={styles.container}>
@@ -16,7 +16,6 @@ export default function App() {
 
       <AnimatedBlock
         style={{
-          opacity: x.value,
           width: 100,
           height: 100,
           backgroundColor: '#3399ff',
