@@ -1,27 +1,43 @@
-import { Animated, View, Text, Image, ScrollView } from 'react-native';
+import { Animated, View, Text, Image, ScrollView } from "react-native";
 
 const { createAnimatedComponent } = Animated;
 
 /**
+ * makeAnimatedComponent(Component)
  * Make any component animatable
  */
-export function makeAnimatedComponent(WrappedComponent: any) {
+function makeAnimatedComponent(WrappedComponent: any) {
   return createAnimatedComponent(WrappedComponent);
 }
 
 /**
- * AnimatedBlock : Animated View
+ * AnimatedBlock
+ * Animated component for View node
  */
-export const AnimatedBlock = makeAnimatedComponent(View);
+const AnimatedBlock = makeAnimatedComponent(View);
+
 /**
- * AnimatedText : Animated Text
+ * AnimatedText
+ * Animated component for Text node
  */
-export const AnimatedText = makeAnimatedComponent(Text);
+const AnimatedText = makeAnimatedComponent(Text);
+
 /**
- * AnimatedImage : Animated Image
+ * AnimatedImage
+ * Animated component for Image node
  */
-export const AnimatedImage = makeAnimatedComponent(Image);
+const AnimatedImage = makeAnimatedComponent(Image);
+
 /**
- * AnimatedImage : Animated ScrollView
+ * AnimatedScrollView
+ * Animated component for ScrollView node
  */
-export const AnimatedScrollView = makeAnimatedComponent(ScrollView);
+const AnimatedScrollView = makeAnimatedComponent(ScrollView);
+
+export {
+  AnimatedBlock,
+  AnimatedText,
+  AnimatedImage,
+  AnimatedScrollView,
+  makeAnimatedComponent,
+};

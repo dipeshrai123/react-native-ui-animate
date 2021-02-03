@@ -2,7 +2,7 @@
  * bin(booleanValue)
  * returns 1 if booleanValue == true and 0 if booleanValue == false
  */
-export function bin(bool: boolean) {
+function bin(bool: boolean) {
   return bool ? 1 : 0;
 }
 
@@ -10,7 +10,7 @@ export function bin(bool: boolean) {
  * mix(progress, a, b)
  * linear interpolation between a and b
  */
-export function mix(perc: number, val1: number, val2: number) {
+function mix(perc: number, val1: number, val2: number) {
   return val1 * (1 - perc) + val2 * perc;
 }
 
@@ -18,7 +18,7 @@ export function mix(perc: number, val1: number, val2: number) {
  * clamp(value, min, max)
  * clamps value for min and max bounds
  */
-export function clamp(value: number, lowerbound: number, upperbound: number) {
+function clamp(value: number, lowerbound: number, upperbound: number) {
   return Math.min(Math.max(value, lowerbound), upperbound);
 }
 
@@ -42,11 +42,11 @@ function rubber(distanceFromEdge: number, dimension: number, constant: number) {
  * extends beyond min and max values with constant
  * factor to create elastic rubber band effect
  */
-export function rubberClamp(
+function rubberClamp(
   value: number,
   lowerbound: number,
   upperbound: number,
-  constant: number = 0.15
+  constant: number = 0.15,
 ) {
   if (constant === 0) return clamp(value, lowerbound, upperbound);
 
@@ -72,10 +72,10 @@ export function rubberClamp(
  * Calculates the final snapPoint according to given current value,
  * velocity and snapPoints array
  */
-export function snapTo(
+function snapTo(
   value: number,
   velocity: number,
-  snapPoints: Array<number>
+  snapPoints: Array<number>,
 ): number {
   const finalValue = value + velocity * 0.2;
   const getDiff = (point: number) => Math.abs(point - finalValue);
@@ -95,7 +95,7 @@ export function snapTo(
  * move(array, moveIndex, toIndex)
  * move array item from moveIndex to toIndex without array modification
  */
-export function move(array: Array<any>, moveIndex: number, toIndex: number) {
+function move(array: Array<any>, moveIndex: number, toIndex: number) {
   const item = array[moveIndex];
   const length = array.length;
   const diff = moveIndex - toIndex;
@@ -118,3 +118,5 @@ export function move(array: Array<any>, moveIndex: number, toIndex: number) {
   }
   return array;
 }
+
+export { bin, mix, clamp, rubberClamp, move, snapTo };

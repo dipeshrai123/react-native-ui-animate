@@ -1,6 +1,6 @@
-import { Animated } from 'react-native';
+import { Animated } from "react-native";
 
-type ExtrapolateType = 'identity' | 'extend' | 'clamp';
+type ExtrapolateType = "identity" | "extend" | "clamp";
 
 interface ExtrapolateConfig {
   extrapolate?: ExtrapolateType;
@@ -11,11 +11,11 @@ interface ExtrapolateConfig {
 /**
  * interpolate() interpolates the value from one input range to another output range
  */
-export const interpolate = (
+const interpolate = (
   value: Animated.Value,
   inputRange: Array<number>,
   outputRange: number[] | string[],
-  extrapolateConfig?: ExtrapolateConfig
+  extrapolateConfig?: ExtrapolateConfig,
 ) => {
   return value.interpolate({
     inputRange,
@@ -27,10 +27,12 @@ export const interpolate = (
 /**
  * interpolate() interpolates the value from input range 0 - 1 to another output range
  */
-export const bInterpolate = (
+const bInterpolate = (
   value: Animated.Value,
   outputRange: number[] | string[],
-  extrapolateConfig?: ExtrapolateConfig
+  extrapolateConfig?: ExtrapolateConfig,
 ) => {
   return interpolate(value, [0, 1], outputRange, extrapolateConfig);
 };
+
+export { interpolate, bInterpolate };
