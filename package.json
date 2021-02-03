@@ -2,8 +2,10 @@
   "name": "react-native-ui-animate",
   "version": "1.0.0",
   "description": "React Native library for gestures and animation",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "build": "rollup -c",
+    "start": "rollup -c -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
