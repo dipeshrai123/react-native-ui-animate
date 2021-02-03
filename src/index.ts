@@ -7,6 +7,7 @@ import {
 } from "./Modules";
 import { useAnimatedValue, useMountedValue } from "./Animation";
 import { interpolate, bInterpolate } from "./Interpolation";
+import { useScroll } from "./hooks";
 
 /**
  * Math functions
@@ -32,4 +33,8 @@ export {
    */
   interpolate,
   bInterpolate,
+  /**
+   * Hooks
+   */
+  useScroll,
 };
