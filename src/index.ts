@@ -7,12 +7,8 @@ import {
 } from "./Modules";
 import { useAnimatedValue, useMountedValue } from "./Animation";
 import { interpolate, bInterpolate } from "./Interpolation";
-import { useScroll } from "./hooks";
-
-/**
- * Math functions
- * import { clamp, mix, rubberClamp, snapTo, bin, move } from './Math';
- */
+import { useScroll, useDrag, useValue } from "./hooks";
+import { clamp, mix, rubberClamp, snapTo, bin, move } from "./Math";
 
 export {
   /**
@@ -37,4 +33,15 @@ export {
    * Hooks
    */
   useScroll,
+  useDrag,
+  useValue,
+  /**
+   * Math functions
+   */
+  clamp,
+  mix,
+  rubberClamp,
+  snapTo,
+  bin,
+  move,
 };
