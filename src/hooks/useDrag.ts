@@ -1,7 +1,6 @@
 import * as React from "react";
 import { PanResponder } from "react-native";
 import { useConst } from "./useConst";
-import { clamp } from "../Math";
 import { DragEventType, Vector2 } from "../Types";
 
 /**
@@ -83,7 +82,7 @@ const useDrag = (callback: (e: DragEventType) => void) => {
           handleCallback();
         }
       },
-    }),
+    })
   );
 
   return () => {
