@@ -1,6 +1,6 @@
 {
   "name": "react-native-ui-animate",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "React Native library for gestures and animation",
   "main": "dist/index.js",
   "scripts": {

@@ -47,7 +47,7 @@ const getInitialConfig = (
 
     case "ease":
     default:
-      return { mass: 1, stiffness: 100, damping: 26 };
+      return { mass: 1, stiffness: 170, damping: 26 };
   }
 };
 
@@ -61,6 +61,7 @@ interface UseAnimatedValueConfig {
   onAnimationEnd?: (value: number) => void;
   listener?: (value: number) => void;
   immediate?: boolean;
+  easing?: (value: number) => number;
   useNativeDriver?: boolean; // only for react-native ( opacity, transform )
 }
 
@@ -85,6 +86,7 @@ const useAnimatedValue = (
   if (isDefined(config?.immediate) && !!config?.immediate) {
     duration = 0;
   }
+  const easing = config?.easing ?? ((value: number) => value);
 
   // spring configuration
   const animationType = config?.animationType ?? "ease";
@@ -120,6 +122,7 @@ const useAnimatedValue = (
         Animated.timing(_animatedValue, {
           toValue: updatedValue,
           duration,
+          easing,
           useNativeDriver,
         }).start(function ({ finished }) {
           if (finished) {
@@ -236,6 +239,7 @@ const useMountedValue = (
   const onAnimationEnd = config?.onAnimationEnd;
   const listener = config?.listener;
   let duration = config?.duration;
+  const easing = config?.easing ?? ((value: number) => value);
 
   if (isDefined(config?.immediate) && !!config?.immediate) {
     duration = 0;
@@ -281,6 +285,7 @@ const useMountedValue = (
         Animated.timing(_animatedValue.value, {
           toValue: enter,
           duration: enterDuration,
+          easing,
           useNativeDriver,
         }).start(function ({ finished }) {
           if (finished) {
@@ -297,6 +302,7 @@ const useMountedValue = (
         Animated.timing(_animatedValue.value, {
           toValue: leave,
           duration: exitDuration,
+          easing,
           useNativeDriver,
         }).start(function ({ finished }) {
           if (finished) {
