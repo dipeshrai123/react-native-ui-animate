@@ -10,6 +10,7 @@ type AnimationConfigType = {
   mass?: number;
   stiffness?: number;
   damping?: number;
+  delay?: number;
 };
 
 const isDefined = <T>(value: T): boolean => {
@@ -62,6 +63,7 @@ interface UseAnimatedValueConfig {
   listener?: (value: number) => void;
   immediate?: boolean;
   easing?: (value: number) => number;
+  delay?: number;
   useNativeDriver?: boolean; // only for react-native ( opacity, transform )
 }
 
@@ -74,8 +76,9 @@ const useAnimatedValue = (
   config?: UseAnimatedValueConfig,
 ) => {
   const _initialValue = getValue(initialValue);
-  const _animatedValue = React.useRef(new Animated.Value(_initialValue))
-    .current;
+  const _animatedValue = React.useRef(
+    new Animated.Value(_initialValue),
+  ).current;
   const previousValue = React.useRef<number>(_initialValue);
   const currentValue = React.useRef(_initialValue);
 
@@ -95,6 +98,7 @@ const useAnimatedValue = (
   const stiffness = config?.tension;
   const damping = config?.friction;
   const velocity = config?.veloctiy;
+  const delay = config?.delay ?? 0;
 
   const initialConfig = getInitialConfig(animationType);
   const restConfig: AnimationConfigType = {};
@@ -103,6 +107,7 @@ const useAnimatedValue = (
   if (isDefined(stiffness)) restConfig.stiffness = stiffness;
   if (isDefined(damping)) restConfig.damping = damping;
   if (isDefined(velocity)) restConfig.velocity = velocity;
+  if (isDefined(delay)) restConfig.delay = delay;
 
   const springConfig = {
     ...initialConfig,
@@ -119,22 +124,28 @@ const useAnimatedValue = (
     if (updatedValue !== undefined) {
       // For timing animation
       if (isDefined(duration)) {
-        Animated.timing(_animatedValue, {
-          toValue: updatedValue,
-          duration,
-          easing,
-          useNativeDriver,
-        }).start(function ({ finished }) {
+        Animated.sequence([
+          Animated.delay(delay),
+          Animated.timing(_animatedValue, {
+            toValue: updatedValue,
+            duration,
+            easing,
+            useNativeDriver,
+          }),
+        ]).start(function ({ finished }) {
           if (finished) {
             onAnimationEnd && onAnimationEnd(currentValue.current);
           }
         });
       } else {
-        Animated.spring(_animatedValue, {
-          toValue: updatedValue,
-          ...springConfig,
-          useNativeDriver,
-        }).start(function ({ finished }) {
+        Animated.sequence([
+          Animated.delay(delay),
+          Animated.spring(_animatedValue, {
+            toValue: updatedValue,
+            ...springConfig,
+            useNativeDriver,
+          }),
+        ]).start(function ({ finished }) {
           if (finished) {
             onAnimationEnd && onAnimationEnd(currentValue.current);
           }
@@ -142,11 +153,14 @@ const useAnimatedValue = (
       }
     } else if (immediate !== undefined) {
       if (immediate) {
-        Animated.timing(_animatedValue, {
-          toValue: previousValue.current,
-          duration: 0,
-          useNativeDriver,
-        }).start(function ({ finished }) {
+        Animated.sequence([
+          Animated.delay(delay),
+          Animated.timing(_animatedValue, {
+            toValue: previousValue.current,
+            duration: 0,
+            useNativeDriver,
+          }),
+        ]).start(function ({ finished }) {
           if (finished) {
             onAnimationEnd && onAnimationEnd(currentValue.current);
           }
@@ -229,8 +243,9 @@ const useMountedValue = (
   const [entered, setEntered] = React.useState(false);
   const [from, enter, leave] = React.useRef(phases).current;
 
-  const _animatedValue = React.useRef({ value: new Animated.Value(from) })
-    .current;
+  const _animatedValue = React.useRef({
+    value: new Animated.Value(from),
+  }).current;
   const currentValue = React.useRef(from);
   const toValue = React.useRef(from);
   const finalValue = React.useRef(from);
@@ -260,6 +275,7 @@ const useMountedValue = (
   const stiffness = config?.tension;
   const damping = config?.friction;
   const velocity = config?.veloctiy;
+  const delay = config?.delay ?? 0;
 
   const initialConfig = getInitialConfig(animationType);
   const restConfig: AnimationConfigType = {};
@@ -268,6 +284,7 @@ const useMountedValue = (
   if (isDefined(stiffness)) restConfig.stiffness = stiffness;
   if (isDefined(damping)) restConfig.damping = damping;
   if (isDefined(velocity)) restConfig.velocity = velocity;
+  if (isDefined(delay)) restConfig.delay = delay;
 
   const springConfig = {
     ...initialConfig,
@@ -282,12 +299,15 @@ const useMountedValue = (
       finalValue.current = toValue.current;
 
       if (isDefined(enterDuration) && value) {
-        Animated.timing(_animatedValue.value, {
-          toValue: enter,
-          duration: enterDuration,
-          easing,
-          useNativeDriver,
-        }).start(function ({ finished }) {
+        Animated.sequence([
+          Animated.delay(delay),
+          Animated.timing(_animatedValue.value, {
+            toValue: enter,
+            duration: enterDuration,
+            easing,
+            useNativeDriver,
+          }),
+        ]).start(function ({ finished }) {
           if (finished) {
             onAnimationEnd && onAnimationEnd(currentValue.current);
 
@@ -299,12 +319,15 @@ const useMountedValue = (
           }
         });
       } else if (isDefined(exitDuration) && !value) {
-        Animated.timing(_animatedValue.value, {
-          toValue: leave,
-          duration: exitDuration,
-          easing,
-          useNativeDriver,
-        }).start(function ({ finished }) {
+        Animated.sequence([
+          Animated.delay(delay),
+          Animated.timing(_animatedValue.value, {
+            toValue: leave,
+            duration: exitDuration,
+            easing,
+            useNativeDriver,
+          }),
+        ]).start(function ({ finished }) {
           if (finished) {
             onAnimationEnd && onAnimationEnd(currentValue.current);
 
@@ -316,11 +339,14 @@ const useMountedValue = (
           }
         });
       } else {
-        Animated.spring(_animatedValue.value, {
-          toValue: value ? enter : leave,
-          ...springConfig,
-          useNativeDriver,
-        }).start(function ({ finished }) {
+        Animated.sequence([
+          Animated.delay(delay),
+          Animated.spring(_animatedValue.value, {
+            toValue: value ? enter : leave,
+            ...springConfig,
+            useNativeDriver,
+          }),
+        ]).start(function ({ finished }) {
           if (finished) {
             onAnimationEnd && onAnimationEnd(currentValue.current);
 
